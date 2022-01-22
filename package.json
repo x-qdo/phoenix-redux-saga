@@ -1,6 +1,13 @@
 {
   "name": "@x-qdo/phoenix-redux-saga",
-  "version": "0.1.1",
+  "version": "0.1.2",
+  "keywords": ["phoenix", "phoenixjs", "redux", "redux-saga"],
+  "homepage": "https://github.com/x-qdo/phoenix-redux-saga#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/x-qdo/phoenix-redux-saga"
+  },
+  "bugs": "https://github.com/x-qdo/phoenix-redux-saga/issues",
   "description": "phoenixjs to saga adapter",
   "main": "src/index.js",
   "scripts": {
