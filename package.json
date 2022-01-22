@@ -1,0 +1,20 @@
+{
+  "name": "@x-qdo/phoenix-redux-saga",
+  "version": "0.1.0",
+  "description": "phoenixjs to saga adapter",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "jsdoc2md --template README.hbs src/*.js > README.md"
+  },
+  "author": "raman.birulia@qdo.ee",
+  "license": "MIT",
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.7.1",
+    "phoenix": "^1.6.6",
+    "redux-saga": "^1.1.3"
+  },
+  "devDependencies": {
+    "jsdoc-to-markdown": "^7.1.0"
+  }
+}
