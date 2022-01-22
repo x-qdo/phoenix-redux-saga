@@ -1,6 +1,6 @@
 {
   "name": "@x-qdo/phoenix-redux-saga",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "phoenixjs to saga adapter",
   "main": "src/index.js",
   "scripts": {
