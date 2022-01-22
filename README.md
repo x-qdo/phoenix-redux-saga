@@ -1,6 +1,11 @@
 # phoenix-redux-saga
 
 Library adapter to use Phoenix.js as a saga.
+Inspired by [@trixta/phoenix-to-redux](https://www.npmjs.com/package/@trixta/phoenix-to-redux)
+
+## Known limitations
+
+Library support only one socket at a time.
 
 ## Modules
 
@@ -109,5 +114,4 @@ Disconnect from socket saga.
 
 
 * * *
-
 &copy; 2021-2022 X-QDO OÜ
