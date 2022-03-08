@@ -113,5 +113,22 @@ Disconnect from socket saga.
 | [reason] | <code>string</code> | A textual description of the reason to disconnect. |
 
 
+## Installation
+
+Add `...newPhoenixReducer` to your combineReducers functions;
+
+```
+import { phoenixReducer } from "@x-qdo/phoenix-redux-saga";
+...
+
+export const rootReducer = (history) => combineReducers({
+    ...newPhoenixReducer,
+
+    myOtherReducer,
+    myOtherAmazingReducer,
+})
+
+```
+
 * * *
 &copy; 2021-2022 X-QDO OÜ

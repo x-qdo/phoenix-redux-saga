@@ -9,5 +9,22 @@ Library support only one socket at a time.
 
 {{>main}}
 
+## Installation
+
+Add `...newPhoenixReducer` to your combineReducers functions;
+
+```
+import { phoenixReducer } from "@x-qdo/phoenix-redux-saga";
+...
+
+export const rootReducer = (history) => combineReducers({
+    ...newPhoenixReducer,
+
+    myOtherReducer,
+    myOtherAmazingReducer,
+})
+
+```
+
 * * *
 &copy; 2021-2022 X-QDO OÜ
