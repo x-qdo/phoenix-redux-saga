@@ -84,12 +84,14 @@ export function* joinToChannelSaga(topic, opts = {}) {
 export function* leaveChannelSaga(topic) {
   const channel = yield select(selectors.channel(topic));
 
-  yield new Promise((resolve, reject) => {
-    channel
-      .leave()
-      .receive("ok", resolve)
-  });
-  yield put(removeChannel(channel));
+  if (channel) {
+    yield new Promise((resolve) => {
+      channel
+        .leave()
+        .receive("ok", resolve)
+    });
+    yield put(removeChannel(channel));
+  }
 }
 
 /**
