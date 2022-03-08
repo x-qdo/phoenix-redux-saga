@@ -24,11 +24,11 @@ export const {
 } = socketSlice.actions;
 
 export const phoenixReducer = {
-  newPhoenix: socketSlice.reducer,
+  phoenix: socketSlice.reducer,
 }
 
 export const selectors = {
-  socket: () => s => s.newPhoenix.socket,
-  channels: () => s => s.newPhoenix.channels,
-  channel: topic => s => s.newPhoenix.channels[topic],
+  socket: () => s => s.phoenix.socket,
+  channels: () => s => s.phoenix.channels,
+  channel: topic => s => s.phoenix.channels[topic],
 };

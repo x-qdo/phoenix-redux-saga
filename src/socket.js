@@ -15,8 +15,8 @@ import { selectors, setSocket } from "./phoenixSlice";
  * @param {Object} [opts] - Opts on socket connection.
  */
 export function* connectToSocketSaga(endPoint, opts) {
-  const existingSocker = yield select(selectors.socket());
-  if (existingSocker?.isConnected()) {
+  const existingSocket = yield select(selectors.socket());
+  if (existingSocket?.isConnected()) {
     return;
   }
   const socket = new Socket(endPoint, opts);
