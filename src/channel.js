@@ -67,8 +67,8 @@ export function* joinToChannelSaga(topic, opts = {}) {
       channel
         .join()
         .receive("ok", ({messages}) => resolve(messages))
-        .receive("error", ({reason}) => reject(reason))
-        .receive("timeout", () => reject({reason: "timeout"}))
+        .receive("error", (error) => reject(error))
+        .receive("timeout", () => reject({code: "timeout"}))
     });
     yield put(setChannel(channel));
   } catch (err) {
@@ -119,8 +119,8 @@ export function* pushToChannelSaga(topic, event, payload, {
       channel
         .push(event, payload, timeout ? timeout : channel.timeout)
         .receive("ok", resolve)
-        .receive("error", ({reason}) => reject(reason))
-        .receive("timeout", () => reject({reason: TIMEOUT_ERROR_REASON}))
+        .receive("error", (error) => reject(error))
+        .receive("timeout", () => reject({timeout: TIMEOUT_ERROR_REASON}))
     });
     yield call(onReplySaga, response);
   } catch (err) {
