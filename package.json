@@ -1,6 +1,6 @@
 {
   "name": "@x-qdo/phoenix-redux-saga",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "keywords": ["phoenix", "phoenixjs", "redux", "redux-saga"],
   "homepage": "https://github.com/x-qdo/phoenix-redux-saga#readme",
   "repository": {
