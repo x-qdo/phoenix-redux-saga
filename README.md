@@ -131,4 +131,4 @@ export const rootReducer = (history) => combineReducers({
 ```
 
 * * *
-&copy; 2021-2022 X-QDO OÜ
+&copy; 2021-2023 X-QDO OÜ

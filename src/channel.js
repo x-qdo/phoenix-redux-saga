@@ -7,12 +7,7 @@ import { eventChannel } from "redux-saga";
 import { call, fork, put, select, spawn, take } from "redux-saga/effects";
 
 import { removeChannel, selectors, setChannel } from "./phoenixSlice";
-import {
-  defaultErrorHandlerSaga,
-  defaultResponseHandlerSaga,
-  defaultTimeoutHandlerSaga,
-  TIMEOUT_ERROR_REASON
-} from "./defaultErrorHandlers";
+import { globalChannelHandlers, TIMEOUT_ERROR_REASON } from "./defaultErrorHandlers";
 
 function createEventChannel(channel, events) {
   return eventChannel(emitter => {
@@ -39,7 +34,7 @@ function* watchEventsSaga(channel, events) {
       const {saga, payload} = yield take(eventsChannel);
       yield fork(saga, payload);
     } catch (err) {
-      console.error(err)
+      globalChannelHandlers.onError(err, channel.topic, "js error", {});
     }
   }
 }
@@ -55,9 +50,10 @@ function* watchEventsSaga(channel, events) {
  * @param {Generator} opts.events[].saga - Saga to trigger on event.
  * @param {Object} [opts.chanParams] - Parameters for the channel, for example {token: roomToken}.
  * @param {Generator} [opts.onErrorSaga] - Saga to trigger on error.
+ * @param {Generator} [opts.onReplySaga] - Saga to trigger on reply.
  */
 export function* joinToChannelSaga(topic, opts = {}) {
-  const {events = [], chanParams = {}, onErrorSaga = defaultErrorHandlerSaga} = opts;
+  const {events = [], chanParams = {}, onErrorSaga, onReplySaga} = opts;
   const socket = yield select(selectors.socket());
   const channel = socket.channel(topic, chanParams);
 
@@ -71,8 +67,19 @@ export function* joinToChannelSaga(topic, opts = {}) {
         .receive("timeout", () => reject({code: "timeout"}))
     });
     yield put(setChannel(channel));
+    const isHandled = onReplySaga
+        ? yield call(onReplySaga, "ok", topic, "join")
+        : false;
+    if (!isHandled) {
+      yield call(globalChannelHandlers.onReply, "ok", topic, "join", {});
+    }
   } catch (err) {
-    yield call(onErrorSaga, err, topic)
+    const isHandled = onErrorSaga
+        ? yield call(onErrorSaga, err, topic, "join")
+        : false;
+    if (!isHandled) {
+      yield call(globalChannelHandlers.onError, err, topic, "join", {});
+    }
   }
 }
 
@@ -103,13 +110,11 @@ export function* leaveChannelSaga(topic) {
  * @param {Object} [opts] - Options of push event:
  * @param {Generator} [opts.onReplySaga] - Callback saga to trigger on success response
  * @param {Generator} [opts.onErrorSaga] - Callback saga to trigger on error response
- * @param {Generator} [opts.onTimeoutSaga] - Callback saga to trigger on timeout
  * @param {?number} [opts.timeout] - The push timeout in milliseconds
  */
 export function* pushToChannelSaga(topic, event, payload, {
-  onReplySaga = defaultResponseHandlerSaga,
-  onErrorSaga = defaultErrorHandlerSaga,
-  onTimeoutSaga = defaultTimeoutHandlerSaga,
+  onReplySaga,
+  onErrorSaga,
   timeout = null
 } = {}) {
   const channel = yield select(selectors.channel(topic));
@@ -120,14 +125,20 @@ export function* pushToChannelSaga(topic, event, payload, {
         .push(event, payload, timeout ? timeout : channel.timeout)
         .receive("ok", resolve)
         .receive("error", (error) => reject(error))
-        .receive("timeout", () => reject({timeout: TIMEOUT_ERROR_REASON}))
+        .receive("timeout", () => reject({code: TIMEOUT_ERROR_REASON}))
     });
-    yield call(onReplySaga, response);
+    const isHandled = onReplySaga
+        ? yield call(onReplySaga, response, topic, event)
+        : false;
+    if (!isHandled) {
+      yield call(globalChannelHandlers.onReply, response, topic, event, payload);
+    }
   } catch (err) {
-    if (err?.reason === TIMEOUT_ERROR_REASON) {
-      yield call(onTimeoutSaga, err, topic)
-    } else {
-      yield call(onErrorSaga, err, topic)
+    const isHandled = onErrorSaga
+        ? yield call(onErrorSaga, err, topic, event)
+        : false;
+    if (!isHandled) {
+      yield call(globalChannelHandlers.onError, err, topic, event, payload);
     }
   }
 }

@@ -1,13 +1,24 @@
 export const TIMEOUT_ERROR_REASON = "timeout";
 
-export function* defaultErrorHandlerSaga(error, topic) {
-  console.error(error, topic);
+function* defaultErrorHandlerSaga(error, topic, payload) {
+    console.error(error, topic, payload);
 }
 
-export function* defaultResponseHandlerSaga(response) {
-  console.log("phoenix reply", response);
+function* defaultResponseHandlerSaga(response) {
+    console.log("phoenix reply", response);
 }
 
-export function* defaultTimeoutHandlerSaga(error, topic) {
-  console.log("phoenix timeout", error, topic);
+class GlobalChannelHandlers {
+    constructor() {
+        this.onError = defaultErrorHandlerSaga;
+        this.onReply = defaultResponseHandlerSaga;
+    }
+
+    setHandlers(globalHandlers) {
+        this.onError = globalHandlers?.onErrorSaga || this.onError;
+        this.onReply = globalHandlers?.onReplySaga || this.onReply;
+        this.onTimeout = globalHandlers?.onTimeoutSaga || this.onTimeout;
+    }
 }
+
+export const globalChannelHandlers = new GlobalChannelHandlers();

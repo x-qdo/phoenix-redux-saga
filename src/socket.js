@@ -6,6 +6,7 @@
 import { Socket } from "phoenix";
 import { put, select } from "redux-saga/effects";
 import { selectors, setSocket } from "./phoenixSlice";
+import { globalChannelHandlers } from "./defaultErrorHandlers";
 
 
 /**
@@ -13,8 +14,12 @@ import { selectors, setSocket } from "./phoenixSlice";
  * {@link https://hexdocs.pm/phoenix/js/index.html#socket Phoenix.js socket options}.
  * @param {string} endPoint - The string WebSocket endpoint, ie, "ws://example.com/socket" , "wss://example.com" "/socket" (inherited host & protocol)
  * @param {Object} [opts] - Opts on socket connection.
+ * @param {Object} [globalHandlers] - Global handlers for socket.
+ * @param {Generator} [globalHandlers.onErrorSaga] - Saga to trigger on error [function* (error, topic, payload) => isResolved].
+ * @param {Generator} [globalHandlers.onReplySaga] - Saga to trigger on reply .
  */
-export function* connectToSocketSaga(endPoint, opts) {
+export function* connectToSocketSaga(endPoint, opts, globalHandlers) {
+  globalChannelHandlers.setHandlers(globalHandlers);
   const existingSocket = yield select(selectors.socket());
   if (existingSocket?.isConnected?.()) {
     return;
